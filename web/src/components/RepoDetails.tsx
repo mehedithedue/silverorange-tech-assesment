@@ -6,9 +6,11 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { sortCommitByDate } from '../helper/RepoHelper';
 import { Commit } from '../types/Commit';
 import { Repo } from '../types/Repo';
 import client from '../utils/client';
+import ShowError from './ShowError';
 
 function RepoDetails(): JSX.Element | null {
   const location = useLocation();
@@ -31,7 +33,8 @@ function RepoDetails(): JSX.Element | null {
 
   useEffect(() => {
     if (commits.length) {
-      setLatestCommit(commits[0]);
+      const sortedCommit = sortCommitByDate(commits);
+      setLatestCommit(sortedCommit[0]);
     }
   }, [commits]);
 
@@ -54,25 +57,30 @@ function RepoDetails(): JSX.Element | null {
               </Button>
             </Grid>
           </Grid>
-          <CardContent>
-            <Typography
-              sx={{ fontSize: 16 }}
-              color="text.secondary"
-              gutterBottom={true}
-            >
-              Latest Commit
-            </Typography>
-            <Typography variant="h6" component="div">
-              Author : {latestCommit && latestCommit.commit.author.name}
-            </Typography>
-            <Typography sx={{ mb: 1.5 }}>
-              Date : {latestCommit && latestCommit.commit.author.date}
-            </Typography>
-            <Typography variant="body2">
-              {latestCommit && latestCommit.commit.message}.
-              <br />
-            </Typography>
-          </CardContent>
+          {latestCommit && (
+            <CardContent>
+              <Typography
+                sx={{ fontSize: 16 }}
+                color="text.secondary"
+                gutterBottom={true}
+              >
+                Latest Commit
+              </Typography>
+              <Typography variant="h6" component="div">
+                Author : {latestCommit && latestCommit.commit.author.name}
+              </Typography>
+              <Typography sx={{ mb: 1.5 }}>
+                Date : {latestCommit && latestCommit.commit.author.date}
+              </Typography>
+              <Typography variant="body2">
+                {latestCommit && latestCommit.commit.message}.
+                <br />
+              </Typography>
+            </CardContent>
+          )}
+          {!latestCommit && (
+            <ShowError errorText={'Sorry, there is no commit'} />
+          )}
         </Paper>
       </Box>
     </>
