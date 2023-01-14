@@ -4,7 +4,7 @@ import CardContent from '@mui/material/CardContent';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { sortCommitByDate } from '../helper/RepoHelper';
 import { Commit } from '../types/Commit';
@@ -31,12 +31,16 @@ function RepoDetails(): JSX.Element | null {
     }
   }, [repo]);
 
+  const sortedCommit: Commit[] = useMemo(
+    () => sortCommitByDate(commits),
+    [commits]
+  );
+
   useEffect(() => {
-    if (commits.length) {
-      const sortedCommit = sortCommitByDate(commits);
+    if (sortedCommit.length) {
       setLatestCommit(sortedCommit[0]);
     }
-  }, [commits]);
+  }, [sortedCommit]);
 
   return (
     <>

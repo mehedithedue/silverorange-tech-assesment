@@ -1,7 +1,7 @@
 import { Box } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   getDistinctLanguageFromRepo,
   sortRepoByDate,
@@ -22,16 +22,17 @@ function RepoList(): JSX.Element | null {
 
   useEffect(() => {
     if (data !== null) {
-      const sortedData: Repo[] = sortRepoByDate(data);
-      const languages: string[] = getDistinctLanguageFromRepo(data);
+      setRepos(data);
 
-      setRepos(sortedData);
+      const languages: string[] = getDistinctLanguageFromRepo(data);
       setLanguageList(languages);
     }
     if (error !== null) {
       setErrorText(error);
     }
   }, [data, error]);
+
+  const sortedRepo: Repo[] = useMemo(() => sortRepoByDate(repos), [repos]);
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -49,7 +50,9 @@ function RepoList(): JSX.Element | null {
           </Grid>
         </Grid>
 
-        {repos && <RepoListTable repos={repos} filterLanguage={language} />}
+        {sortedRepo && (
+          <RepoListTable repos={sortedRepo} filterLanguage={language} />
+        )}
 
         {errorText && <ShowError errorText={errorText} />}
       </Paper>
