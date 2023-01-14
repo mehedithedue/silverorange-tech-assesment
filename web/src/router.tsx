@@ -10,14 +10,12 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   {
-    path: 'repo',
+    path: '/repos',
     element: <RepoList />,
-    children: [
-      {
-        path: ':repoId',
-        element: <RepoDetails />,
-      },
-    ],
+  },
+  {
+    path: '/repos/:repoId',
+    element: <RepoDetails />,
   },
 ]);
 

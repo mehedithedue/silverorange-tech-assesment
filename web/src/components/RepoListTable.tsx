@@ -5,6 +5,7 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import { useNavigate } from 'react-router-dom';
 import { Repo } from '../types/Repo';
 
 interface RepoListTableProps {
@@ -13,11 +14,17 @@ interface RepoListTableProps {
 }
 
 function RepoListTable({ repos, filterLanguage }: RepoListTableProps) {
+  const navigate = useNavigate();
+
   const filterdRepo = () => {
     if (!filterLanguage) {
       return repos;
     }
     return repos.filter((repo: Repo) => repo.language === filterLanguage);
+  };
+
+  const handleRepoClick = (repo: Repo) => {
+    navigate(`repos/${repo.id}`, { state: { repo } });
   };
 
   return (
@@ -34,8 +41,12 @@ function RepoListTable({ repos, filterLanguage }: RepoListTableProps) {
         <TableBody>
           {filterdRepo().map((repo: Repo) => (
             <TableRow
+              onClick={() => handleRepoClick(repo)}
               key={repo.id}
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+              sx={{
+                cursor: 'pointer',
+                '&:last-child td, &:last-child th': { border: 0 },
+              }}
             >
               <TableCell component="th" scope="row">
                 {repo.name}

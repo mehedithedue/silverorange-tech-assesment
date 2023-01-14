@@ -8,7 +8,7 @@ const useAxiosGet = (url: string) => {
 
   useEffect(() => {
     client
-      .get(url)
+      .get('http://localhost:4000/' + url)
       .then((response) => setData(response.data))
       .catch((err) => setError(err.message))
       .finally(() => setLoaded(true));
