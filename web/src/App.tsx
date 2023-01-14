@@ -1,25 +1,25 @@
-import React from 'react';
-import logo from './logo.svg';
+import { Box } from '@mui/material';
+import Container from '@mui/material/Container';
+import CssBaseline from '@mui/material/CssBaseline';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
+import { RouterProvider } from 'react-router-dom';
 import './App.css';
+import Footer from './components/Footer';
+import Header from './components/Header';
+import router from './router';
 
 export function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={createTheme()}>
+      <CssBaseline />
+      <Container maxWidth="xl">
+        <Header title="Technical assesment" />
+        <Box sx={{ mt: 3 }}>
+          <RouterProvider router={router} />
+        </Box>
+        <Footer />
+      </Container>
+    </ThemeProvider>
   );
 }
