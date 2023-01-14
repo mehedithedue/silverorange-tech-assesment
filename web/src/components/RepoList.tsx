@@ -8,35 +8,49 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { useEffect, useState } from 'react';
+import {
+  getDistinctLanguageFromRepo,
+  sortRepoByDate,
+} from '../helper/RepoHelper';
 import useAxiosGet from '../hooks/useAxiosGet';
 import { Repo } from '../types/Repo';
+import SelectLanguage from './SelectLanguage';
 import ShowError from './ShowError';
 
 function RepoList(): JSX.Element | null {
   const [repos, setRepos] = useState<Repo[]>([]);
+  const [languageList, setLanguageList] = useState<string[]>([]);
+  const [errorText, setErrorText] = useState<string | null>(null);
+  const [language, setLanguage] = useState<string>('');
 
   const { data, error } = useAxiosGet('repos');
 
-  const sortByDate = (repoData: Repo[]) =>
-    repoData
-      .sort(
-        (a, b) =>
-          new Date(a.created_at).valueOf() - new Date(b.created_at).valueOf()
-      )
-      .reverse();
-
   useEffect(() => {
     if (data !== null) {
-      setRepos(sortByDate(data));
+      const sortedData: Repo[] = sortRepoByDate(data);
+      const languages: string[] = getDistinctLanguageFromRepo(data);
+
+      setRepos(sortedData);
+      setLanguageList(languages);
     }
-  }, [data]);
+    if (error !== null) {
+      setErrorText(error);
+    }
+  }, [data, error]);
 
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2, mt: 2, p: 2 }}>
         <Grid container={true} spacing={2}>
-          <Grid item={true} xs={8}>
+          <Grid item={true} xs={10}>
             <h2>RepoList List</h2>
+          </Grid>
+          <Grid item={true} xs={2}>
+            <SelectLanguage
+              setLanguage={setLanguage}
+              languageList={languageList}
+              language={language}
+            />
           </Grid>
         </Grid>
 
@@ -67,7 +81,7 @@ function RepoList(): JSX.Element | null {
             </TableBody>
           </Table>
         </TableContainer>
-        {error && <ShowError errorText={error} />}
+        {errorText && <ShowError errorText={errorText} />}
       </Paper>
     </Box>
   );
